@@ -1,11 +1,12 @@
 <template>
-  <Card>
-    <template #title>Simple Card</template>
+  <Card class="card" @click="getMoreInfo">
+    <template #header>
+      <h1>{{ this.card.sign }}</h1>
+    </template>
+    <template #title>{{ this.card.original }}</template>
     <template #content>
-      <p class="m-0">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error
-        repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa
-        ratione quam perferendis esse, cupiditate neque quas!
+      <p>
+        {{ this.card.dates }}
       </p>
     </template>
   </Card>
@@ -13,7 +14,33 @@
 
 <script>
 import Card from 'primevue/card'
+
 export default {
-  components: { Card }
+  props: {
+    card: Object
+  },
+  components: { Card },
+//   methods: {
+
+//   }
 }
 </script>
+
+<style scoped>
+.card {
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  cursor: pointer;
+  transition: .2s;
+
+  padding-top: 24px;
+}
+.card h1 {
+    font-size: 48px;
+}
+.card:hover {
+    transform: scale(1.05);
+}
+</style>

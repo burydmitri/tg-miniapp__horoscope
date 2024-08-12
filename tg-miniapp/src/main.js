@@ -4,14 +4,16 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config';
 import { VueTelegramPlugin } from 'vue-tg'
-import Aura from '@primevue/themes/aura';
+// import Aura from '@primevue/themes/aura';
+import Lara from '@primevue/themes/lara';
 import App from './App.vue'
 
 const app = createApp(App)
 
 app.use(PrimeVue, {
     theme: {
-        preset: Aura
+        // preset: Aura
+        preset: Lara
     }
 });
 app.use(createPinia())
