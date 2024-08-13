@@ -56,7 +56,7 @@ export default {
         {
           sign: '♊',
           dates: '21.05 - 20.06',
-          original: 'Близнаци',
+          original: 'Близнецы',
           translated: 'Gemini'
         },
         {
