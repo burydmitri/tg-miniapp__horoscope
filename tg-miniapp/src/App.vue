@@ -137,13 +137,13 @@ export default {
     }
   },
   mounted() {
-    this.fetchCards()
-
     if (useWebApp().initDataUnsafe.user.language_code == 'ru') {
       this.lang = 'ru'
     } else {
       this.lang = 'en'
     }
+
+    this.fetchCards()
   }
 }
 </script>
