@@ -1,9 +1,28 @@
 <template>
   <div class="app">
-    <h1 class="app__title">Гороскоп</h1>
+    <h1 class="app__title">{{ lang == 'ru' ? 'Гороскоп' : 'Horoscope' }}</h1>
+    <SelectButton class="app__lang" v-model="lang" :options="langOptions"></SelectButton>
     <div class="app__cards">
-      <AppCard v-for="card in signs" :key="card.sign" :card="card" />
+      <AppCard
+        @click="toggleInfoVisibility"
+        v-for="card in this.signs"
+        :key="card.sign"
+        :card="card"
+        :lang="this.lang"
+      />
     </div>
+    <Dialog
+      class="app__dialog"
+      v-model:visible="this.isInfoVisible"
+      modal
+      :style="{ width: '50rem', margin: '0 15px' }"
+    >
+      <template #header>
+        <h2 v-touch:swipe.rigth="toggleInfoVisibility">{{ lang == 'ru' ? 'Прогноз' : 'Predict' }}</h2>
+      </template>
+      <p v-touch:swipe.rigth="toggleInfoVisibility">{{ this.cards.horoscopes[this.sign.toLowerCase()] }}</p>
+      <BackButton @click="toggleInfoVisibility" />
+    </Dialog>
   </div>
 </template>
 
@@ -11,9 +30,14 @@
 import { mapState, mapActions } from 'pinia'
 import { useStore } from './stores/horoscope'
 import AppCard from './components/AppCard.vue'
+import Dialog from 'primevue/dialog'
+import SelectButton from 'primevue/selectbutton'
+
+import { BackButton } from 'vue-tg'
+import { useWebApp } from 'vue-tg'
 
 export default {
-  components: { AppCard },
+  components: { AppCard, Dialog, SelectButton, BackButton },
   data() {
     return {
       signs: [
@@ -89,18 +113,37 @@ export default {
           original: 'Рыбы',
           translated: 'Pisces'
         }
-      ]
+      ],
+      isInfoVisible: false,
+      lang: 'ru',
+      langOptions: ['ru', 'en']
     }
   },
   computed: {
-    ...mapState(useStore, ['cards'])
+    ...mapState(useStore, ['cards', 'isInfoVisible', 'sign'])
   },
   methods: {
-    ...mapActions(useStore, ['fetchCards'])
+    toggleInfoVisibility() {
+      this.isInfoVisible = !this.isInfoVisible
+    },
+    ...mapActions(useStore, ['fetchCards', 'handleLang'])
   },
-  async mounted() {
-    await this.fetchCards()
-    console.log(this.cards)
+  watch: {
+    lang: {
+      handler(val) {
+        this.handleLang(val)
+        this.fetchCards()
+      }
+    }
+  },
+  mounted() {
+    this.fetchCards()
+
+    if (useWebApp().initDataUnsafe.user.language_code == 'ru') {
+      this.lang = 'ru'
+    } else {
+      this.lang = 'en'
+    }
   }
 }
 </script>
@@ -109,6 +152,10 @@ export default {
 .app {
   width: 100%;
   max-width: 1080px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   padding: 20px;
   margin: 0 auto;
@@ -120,8 +167,16 @@ export default {
   font-weight: 700;
 
   margin-bottom: 20px;
+
+  @media screen and (max-width: 430px) {
+    font-size: 36px;
+  }
+}
+.app__lang {
+  margin-bottom: 20px;
 }
 .app__cards {
+  width: 100%;
   display: grid;
   gap: 20px;
   grid-template-columns: repeat(3, 1fr);

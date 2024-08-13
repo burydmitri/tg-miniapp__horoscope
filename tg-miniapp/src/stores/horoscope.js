@@ -21,9 +21,16 @@ export const useStore = defineStore('horoscope', {
         }
     },
     actions: {
+        handleSign(sign) {
+            this.sign = sign
+        },
+        handleLang(str) {
+            if (str == 'ru') this.language = 'original'
+            else this.language = 'translated'
+        },
         async fetchCards() {
             try {
-                const response = await fetch('http://5.35.90.171:61011/get_horoscope/', {
+                const response = await fetch('https://poker247tech.ru/get_horoscope/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8'
@@ -31,7 +38,7 @@ export const useStore = defineStore('horoscope', {
                     body: JSON.stringify(this.body)
                 })
                 let result = await response.json();
-                
+
                 this.cards = result
             } catch (error) {
                 return error
